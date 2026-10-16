@@ -127,7 +127,8 @@ Added ``ImageTiles`` helpers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :py:func:`~PIL.ImageTiles.clamp_box` clamps a ``(left, upper, right, lower)``
-crop box to an image size. :py:func:`~PIL.ImageTiles.tile_boxes` splits an
+crop box to an image size. :py:func:`~PIL.ImageTiles.center_crop_box` returns
+the box for a centred crop. :py:func:`~PIL.ImageTiles.tile_boxes` splits an
 image into square tiles and returns each tile's clamped crop box. A remainder
 along the right or bottom edge is included as a smaller tile, so the boxes
 cover every pixel exactly once.
