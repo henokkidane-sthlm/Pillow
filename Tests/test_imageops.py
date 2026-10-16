@@ -450,6 +450,74 @@ def test_posterize_invalid_bits(bits: int) -> None:
         ImageOps.posterize(hopper("L"), bits)
 
 
+def _posterize_mask_lut(bits: int) -> list[int]:
+    """Lookup table produced by the current posterize mask."""
+    return [i & (0xFF << (8 - bits)) & 0xFF for i in range(256)]
+
+
+@pytest.mark.parametrize("bits", range(1, 9))
+def test_posterize_l_matches_bit_mask(bits: int) -> None:
+    gradient = Image.frombytes("L", (256, 1), bytes(range(256)))
+    result = ImageOps.posterize(gradient, bits)
+
+    assert list(result.get_flattened_data()) == _posterize_mask_lut(bits)
+
+
+@pytest.mark.parametrize("bits", (1, 3, 8))
+def test_posterize_rgb_matches_per_band(bits: int) -> None:
+    im = hopper("RGB")
+    lut = _posterize_mask_lut(bits)
+    expected = Image.merge("RGB", [band.point(lut) for band in im.split()])
+
+    assert_image_equal(ImageOps.posterize(im, bits), expected)
+
+
+def test_posterize_palette_keeps_alpha() -> None:
+    im = Image.new("P", (1, 2))
+    colors = [0, 17, 255, 10, 128, 64, 200, 33]
+    im.putpalette(colors, "RGBA")
+    im.putpixel((0, 1), 1)
+
+    bits = 3
+    result = ImageOps.posterize(im, bits)
+    lut = _posterize_mask_lut(bits)
+    expected = [value if i % 4 == 3 else lut[value] for i, value in enumerate(colors)]
+
+    palette = result.getpalette("RGBA")
+    assert palette is not None
+    assert palette == expected
+    assert palette[3] == 10
+    assert palette[7] == 33
+    assert result.getpixel((0, 0)) == 0
+    assert result.getpixel((0, 1)) == 1
+
+
+@pytest.mark.parametrize("mode", ("RGBA", "I", "F", "1"))
+def test_posterize_unsupported_mode(mode: str) -> None:
+    with pytest.raises(OSError, match=f"not supported for mode {mode}"):
+        ImageOps.posterize(hopper(mode), 4)
+
+
+def test_posterize_true_matches_one_bit() -> None:
+    im = hopper("L")
+
+    assert_image_equal(ImageOps.posterize(im, True), ImageOps.posterize(im, 1))
+
+
+def test_posterize_float_bits_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        ImageOps.posterize(hopper("L"), 2.5)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("mode", ("L", "RGB", "P"))
+def test_posterize_empty_image(mode: str) -> None:
+    im = Image.new(mode, (0, 0))
+    result = ImageOps.posterize(im, 4)
+
+    assert result.mode == mode
+    assert result.size == (0, 0)
+
+
 @pytest.mark.parametrize("blackpoint, whitepoint", ((-1, 255), (0, 256), (200, 50)))
 def test_colorize_invalid_points(blackpoint: int, whitepoint: int) -> None:
     with pytest.raises(ValueError, match="blackpoint and whitepoint must each be"):

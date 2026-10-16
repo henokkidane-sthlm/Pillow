@@ -710,8 +710,8 @@ def posterize(image: Image.Image, bits: int) -> Image.Image:
     if not 1 <= bits <= 8:
         msg = "bits must be between or equal to 1 and 8"
         raise ValueError(msg)
-    mask = ~(2 ** (8 - bits) - 1)
-    lut = [i & mask for i in range(256)]
+    shift = 8 - bits
+    lut = [(i >> shift) << shift for i in range(256)]
     return _lut(image, lut, palette=True)
 
 
