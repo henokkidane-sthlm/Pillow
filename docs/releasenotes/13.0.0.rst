@@ -131,6 +131,15 @@ Added ``escape`` argument to ``PSDraw.text()``
 The default, ``False``, preserves the existing handling of backslashes and PostScript
 escape sequences.
 
+Added ``ImageTiles.split_grid()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:py:func:`~PIL.ImageTiles.split_grid` splits an image size into a ``rows`` by
+``cols`` grid of crop boxes. The boxes are returned in row-major order as
+``(left, upper, right, lower)`` tuples and cover every pixel exactly once.
+When the width or height does not divide evenly, the remainder pixels are
+spread so that neighboring tiles differ in size by at most one pixel.
+
 Other changes
 =============
 
