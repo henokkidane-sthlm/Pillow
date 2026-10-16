@@ -130,7 +130,9 @@ Added ``ImageTiles`` helpers
 crop box to an image size. :py:func:`~PIL.ImageTiles.tile_boxes` splits an
 image into square tiles and returns each tile's clamped crop box. A remainder
 along the right or bottom edge is included as a smaller tile, so the boxes
-cover every pixel exactly once.
+cover every pixel exactly once. :py:func:`~PIL.ImageTiles.split_grid` splits an
+image into a specified number of rows and columns, distributing remainder
+pixels so that cells differ in size by at most one pixel.
 
 Added ``escape`` argument to ``PSDraw.text()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

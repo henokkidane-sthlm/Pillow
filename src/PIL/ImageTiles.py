@@ -70,6 +70,42 @@ def tile_boxes(size: tuple[int, int], tile: int) -> list[tuple[int, int, int, in
     ]
 
 
+def split_grid(
+    size: tuple[int, int], rows: int, cols: int
+) -> list[tuple[int, int, int, int]]:
+    """
+    Split an image into a grid and return each cell's crop box.
+
+    Boxes are ordered left to right, then top to bottom. If a dimension is
+    not evenly divisible, the leading cells in that dimension receive one
+    extra pixel so that cell sizes differ by at most one pixel.
+
+    :param size: The image size in pixels, given as a (width, height) tuple.
+    :param rows: The number of rows. Must be greater than 0.
+    :param cols: The number of columns. Must be greater than 0.
+    :returns: (left, upper, right, lower) boxes in row-major order.
+    :raises ValueError: If ``size`` contains a negative dimension, or if
+        ``rows`` or ``cols`` is not greater than 0.
+    """
+    if rows <= 0 or cols <= 0:
+        msg = "rows and cols must be greater than 0"
+        raise ValueError(msg)
+    width, height = _image_size(size)
+    x_bounds = _grid_bounds(width, cols)
+    y_bounds = _grid_bounds(height, rows)
+
+    return [
+        (x_bounds[col], y_bounds[row], x_bounds[col + 1], y_bounds[row + 1])
+        for row in range(rows)
+        for col in range(cols)
+    ]
+
+
+def _grid_bounds(length: int, parts: int) -> list[int]:
+    part_size, remainder = divmod(length, parts)
+    return [part * part_size + min(part, remainder) for part in range(parts + 1)]
+
+
 def _clamp(value: int, limit: int) -> int:
     if value < 0:
         return 0

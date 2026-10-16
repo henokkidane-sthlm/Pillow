@@ -131,3 +131,59 @@ def test_tile_boxes_crop(mode: str) -> None:
         (4, 3),
         (2, 3),
     ]
+
+
+def test_split_grid_exact_division() -> None:
+    assert ImageTiles.split_grid((6, 4), 2, 3) == [
+        (0, 0, 2, 2),
+        (2, 0, 4, 2),
+        (4, 0, 6, 2),
+        (0, 2, 2, 4),
+        (2, 2, 4, 4),
+        (4, 2, 6, 4),
+    ]
+
+
+def test_split_grid_uneven_size() -> None:
+    assert ImageTiles.split_grid((8, 5), 2, 3) == [
+        (0, 0, 3, 3),
+        (3, 0, 6, 3),
+        (6, 0, 8, 3),
+        (0, 3, 3, 5),
+        (3, 3, 6, 5),
+        (6, 3, 8, 5),
+    ]
+
+
+def test_split_grid_more_cells_than_pixels() -> None:
+    assert ImageTiles.split_grid((2, 1), 2, 3) == [
+        (0, 0, 1, 1),
+        (1, 0, 2, 1),
+        (2, 0, 2, 1),
+        (0, 1, 1, 1),
+        (1, 1, 2, 1),
+        (2, 1, 2, 1),
+    ]
+
+
+@pytest.mark.parametrize(("rows", "cols"), [(0, 1), (-1, 1), (1, 0), (1, -1)])
+def test_split_grid_non_positive_grid(rows: int, cols: int) -> None:
+    with pytest.raises(ValueError, match="rows and cols must be greater than 0"):
+        ImageTiles.split_grid((10, 10), rows, cols)
+
+
+def test_split_grid_negative_size() -> None:
+    with pytest.raises(ValueError, match="image size must be non-negative"):
+        ImageTiles.split_grid((-1, 4), 2, 2)
+
+
+def test_split_grid_covers_every_pixel_once() -> None:
+    width, height = 11, 7
+    covered = [[0] * width for _ in range(height)]
+    for left, upper, right, lower in ImageTiles.split_grid(
+        (width, height), 3, 4
+    ):
+        for y in range(upper, lower):
+            for x in range(left, right):
+                covered[y][x] += 1
+    assert all(cell == 1 for row in covered for cell in row)
