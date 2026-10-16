@@ -70,6 +70,35 @@ def tile_boxes(size: tuple[int, int], tile: int) -> list[tuple[int, int, int, in
     ]
 
 
+def tile_count(
+    image_size: tuple[int, int], tile_size: tuple[int, int]
+) -> tuple[int, int]:
+    """
+    Count how many tiles are needed to cover an image.
+
+    ``columns`` is the number of tiles along the width and ``rows`` is the
+    number along the height. A partial tile on the right or bottom edge
+    counts as a tile. Tiles may be rectangular.
+
+    :param image_size: The image size in pixels, given as a (width, height)
+        tuple. Both dimensions must be greater than 0.
+    :param tile_size: The tile size in pixels, given as a
+        (tile_width, tile_height) tuple. Both dimensions must be greater
+        than 0.
+    :returns: ``(columns, rows)`` of tiles needed to cover the image.
+    :raises ValueError: If any image or tile dimension is not greater than 0.
+    """
+    width, height = image_size
+    tile_width, tile_height = tile_size
+    if width <= 0 or height <= 0 or tile_width <= 0 or tile_height <= 0:
+        msg = "image and tile dimensions must be greater than 0"
+        raise ValueError(msg)
+    return (
+        _tile_count_axis(width, tile_width),
+        _tile_count_axis(height, tile_height),
+    )
+
+
 def _clamp(value: int, limit: int) -> int:
     if value < 0:
         return 0
@@ -84,3 +113,7 @@ def _image_size(size: tuple[int, int]) -> tuple[int, int]:
         msg = "image size must be non-negative"
         raise ValueError(msg)
     return width, height
+
+
+def _tile_count_axis(length: int, tile: int) -> int:
+    return (length + tile - 1) // tile
