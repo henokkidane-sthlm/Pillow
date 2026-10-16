@@ -1,7 +1,8 @@
 #
 # The Python Imaging Library.
 #
-# Helpers for clamping crop boxes and splitting an image into tiles.
+# Helpers for clamping crop boxes, centred crops, and splitting an image
+# into tiles.
 #
 # Copyright (c) 2026 by Pillow contributors
 #
@@ -38,6 +39,25 @@ def clamp_box(
         msg = "Coordinate 'lower' is less than 'upper'"
         raise ValueError(msg)
     return left, upper, right, lower
+
+
+def center_crop_box(
+    size: tuple[int, int], crop: tuple[int, int]
+) -> tuple[int, int, int, int]:
+    """
+    Return the ``(left, upper, right, lower)`` box for a centred crop.
+
+    :param size: The image size ``(W, H)``.
+    :param crop: The crop size ``(w, h)``.
+    :returns: The centred crop box.
+    """
+    W, H = size
+    w, h = crop
+    left = (W - w) // 2
+    upper = (H - h) // 2
+    right = left + w - 1
+    lower = upper + h
+    return (left, upper, right, lower)
 
 
 def tile_boxes(size: tuple[int, int], tile: int) -> list[tuple[int, int, int, int]]:
