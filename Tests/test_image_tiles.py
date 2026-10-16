@@ -118,7 +118,6 @@ def test_tile_boxes_cover_every_pixel_once() -> None:
     assert all(cell == 1 for row in covered for cell in row)
 
 
-@pytest.mark.parametrize("mode", ("1", "P", "RGBA"))
 def test_center_crop_box() -> None:
     assert ImageTiles.center_crop_box((100, 100), (50, 50)) == (25, 25, 74, 75)
 
