@@ -1,0 +1,12 @@
+---
+alwaysApply: false
+globs: src/PIL/ImageFilter.py,src/PIL/ImageOps.py
+description: Conventions for legacy image-filter code
+---
+
+# Legacy image-filter code
+
+- Preserve existing behaviour exactly.
+- Add characterisation tests before refactoring.
+- Prefer readable explicit code.
+- Check edge cases such as empty images, modes `P`, `1` and `RGBA`, and odd kernel sizes.

@@ -26,6 +26,7 @@ Reference
    ImageStat
    ImageText
    ImageTk
+   ImageTiles
    ImageTransform
    ImageWin
    ExifTags
