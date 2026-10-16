@@ -1,0 +1,13 @@
+---
+alwaysApply: true
+description: Team standards for the Pillow imaging library
+---
+
+# Pillow team standards
+
+- Target Python 3.10+ and add type hints to new public functions.
+- Never change a public API without a deprecation path.
+- Every behaviour change needs a pytest test in `Tests/`, written first.
+- Keep pull requests small and focused.
+- Do not modify C code in `src/libImaging` unless asked.
+- Explain trade-offs in the pull request description.

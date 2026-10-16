@@ -37,6 +37,7 @@ global-exclude .git*
 global-exclude *.pyc
 global-exclude *.so
 prune .ci
+prune .cursor
 prune wheels
 prune winbuild/build
 prune winbuild/depends
