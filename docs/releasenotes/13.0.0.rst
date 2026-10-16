@@ -132,6 +132,14 @@ image into square tiles and returns each tile's clamped crop box. A remainder
 along the right or bottom edge is included as a smaller tile, so the boxes
 cover every pixel exactly once.
 
+Added ``ImageTiles.tile_count()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:py:func:`~PIL.ImageTiles.tile_count` returns how many tiles are needed to
+cover an image. It takes the image size and a rectangular tile size, each as
+a ``(width, height)`` tuple, and returns ``(columns, rows)``. A partial tile
+along the right or bottom edge counts as a tile.
+
 Added ``escape`` argument to ``PSDraw.text()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
