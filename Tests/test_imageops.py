@@ -357,6 +357,55 @@ def test_expand_invalid_border(border: tuple[int, ...]) -> None:
         ImageOps.expand(im, border)
 
 
+def test_add_border_percent_size() -> None:
+    im = Image.new("RGB", (100, 50))
+    assert ImageOps.add_border_percent(im, 10).size == (110, 60)
+
+
+@pytest.mark.parametrize("percent, border", ((12, 2), (13, 3), (150, 30)))
+def test_add_border_percent_rounding(percent: float, border: int) -> None:
+    im = Image.new("L", (30, 20))
+    out = ImageOps.add_border_percent(im, percent)
+    assert out.size == (30 + 2 * border, 20 + 2 * border)
+
+
+def test_add_border_percent_zero() -> None:
+    im = hopper()
+    assert_image_equal(ImageOps.add_border_percent(im, 0), im)
+
+
+@pytest.mark.parametrize("fill", ("red", (255, 0, 0)))
+def test_add_border_percent_fill(fill: str | tuple[int, int, int]) -> None:
+    im = hopper()
+    out = ImageOps.add_border_percent(im, 10, fill)
+
+    assert out.getpixel((0, 0)) == (255, 0, 0)
+    assert out.getpixel((out.width - 1, out.height - 1)) == (255, 0, 0)
+    assert_image_equal(out.crop((13, 13, 141, 141)), im)
+
+
+def test_add_border_percent_default_fill() -> None:
+    im = Image.new("RGB", (10, 10), "white")
+    out = ImageOps.add_border_percent(im, 10)
+    assert out.getpixel((0, 0)) == (0, 0, 0)
+
+
+def test_add_border_percent_palette() -> None:
+    with Image.open("Tests/images/p_16.tga") as im:
+        out = ImageOps.add_border_percent(im, 10, (255, 0, 0))
+
+        border = round(min(im.size) / 10)
+        assert out.convert("RGB").getpixel((0, 0)) == (255, 0, 0)
+        im_cropped = out.crop((border, border, out.width - border, out.height - border))
+        assert_image_equal(im_cropped, im)
+
+
+def test_add_border_percent_negative() -> None:
+    im = Image.new("L", (10, 10))
+    with pytest.raises(ValueError):
+        ImageOps.add_border_percent(im, -1)
+
+
 def test_colorize_2color() -> None:
     # Test the colorizing function with 2-color functionality
 
