@@ -123,6 +123,17 @@ namespace URI prefix as before. If set to ``False``, each tag's full
 ``{namespace-uri}local-name`` form is kept instead, avoiding collisions between tags
 that share a local name across different namespaces.
 
+Added ``ImageOps.add_border_percent()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:py:func:`~PIL.ImageOps.add_border_percent` adds a border to all four sides of an
+image, with a width given as a percentage of the image's shorter side and rounded to
+the nearest pixel. For example, a 10% border on a 100x50 image is 5 pixels wide::
+
+    from PIL import Image, ImageOps
+    im = Image.new("RGB", (100, 50))
+    ImageOps.add_border_percent(im, 10, fill="white")  # 110x60
+
 Added ``ImageTiles`` helpers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

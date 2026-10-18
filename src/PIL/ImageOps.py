@@ -563,6 +563,29 @@ def expand(
     return out
 
 
+def add_border_percent(
+    image: Image.Image,
+    percent: float,
+    fill: str | int | tuple[int, ...] = "black",
+) -> Image.Image:
+    """
+    Add a border to all four sides of the image, with a width that is a
+    percentage of the image's shorter side.
+
+    :param image: The image to expand.
+    :param percent: Border width, as a percentage of the shorter side of the
+                    image. The resulting width is rounded to the nearest pixel.
+                    Must not be negative.
+    :param fill: Pixel fill value (a color value). Default is "black".
+    :return: An image.
+    """
+    if percent < 0:
+        msg = "percent must not be negative"
+        raise ValueError(msg)
+    border = round(min(image.size) * percent / 100)
+    return expand(image, border, fill)
+
+
 def fit(
     image: Image.Image,
     size: tuple[int, int],
