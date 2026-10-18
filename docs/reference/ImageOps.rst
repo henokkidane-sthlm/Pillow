@@ -19,6 +19,7 @@ only work on L and RGB images.
 .. autofunction:: deform
 .. autofunction:: equalize
 .. autofunction:: expand
+.. autofunction:: add_border_percent
 .. autofunction:: flip
 .. autofunction:: grayscale
 .. autofunction:: invert
